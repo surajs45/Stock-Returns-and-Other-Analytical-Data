@@ -1,0 +1,85 @@
+import pandas as pd
+import yfinance as yf
+from datetime import datetime
+import matplotlib.pyplot as plt
+
+# Define stock ticker symbol and time range for analysis
+symbol = input("Enter stock symbol: ")
+
+# Start date is set at 2020 but if the range needs to be longer, the date can be changed
+start_date = "2010-01-01"
+end_date = datetime.today().strftime('%Y-%m-%d')
+
+# Retrieve stock data using the Yahoo Finance API through its data frame
+df = yf.download(symbol, start=start_date, end=end_date)
+
+# Calculate the daily returns
+def daily_returns():
+  df['daily_return'] = df['Adj Close'].pct_change()
+  return df['daily_return']
+
+daily_returns = daily_returns()
+print(daily_returns)
+
+# Calculate the cumulative returns
+def cumulative_returns():
+  df['cumulative_return'] = (1 + df['daily_return']).cumprod()
+  return df['cumulative_return']
+
+cumulative_returns = cumulative_returns()
+print(cumulative_returns)
+
+# Calculate the annualized returns
+def annualized_returns():
+  df['annualized_return'] = ((1 + df['daily_return']).cumprod() ** (1/252)) - 1
+  return df['annualized_return']
+
+annualized_returns = annualized_returns()
+print(annualized_returns)
+
+# Calculate the Sharpe ratio
+def sharpe_ratio():
+  df['sharpe_ratio'] = (df['annualized_return'] - 0.02) / df['daily_return']
+  return df['sharpe_ratio']
+
+sharpe_ratio = sharpe_ratio()
+print(sharpe_ratio)
+
+# Calculate the maximum drawdown
+def max_drawdown():
+  df['max_drawdown'] = df['cumulative_return'].cummax() - df['cumulative_return']
+  return df['max_drawdown']
+
+print(df)
+
+# Calculate the volatility
+def volatility():
+  df['volatility'] = df['daily_return'].std()
+  return df['volatility']
+
+volatility = volatility()
+print (volatility)
+
+# Calculate the beta
+def beta():
+  df['beta'] = df['daily_return'].corr(df['daily_return'])
+  return df['beta']
+
+beta = beta()
+print(beta)
+
+# Calculate the correlation
+def correlation():
+  df['correlation'] = df['daily_return'].corr(df['daily_return'])
+  return df['correlation']
+
+correlation = correlation()
+print(correlation)
+
+#Calculate Quick Ratio
+def quick_ratio():
+  df['quick_ratio'] = (df['daily_return'] - 0.02) / df['daily_return']
+  return df['quick_ratio']
+
+quick_ratio = quick_ratio()
+print(quick_ratio)
